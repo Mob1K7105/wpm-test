@@ -2,13 +2,41 @@ import curses
 import random
 import time
 from tabulate import tabulate
+from interactive_buttons import Button, Component
+import os
+from pathlib import Path
 
 wordl = 20
 start = True
 duration = 10
+dir = Path(__file__).resolve().parent
 
-def loadlist():
-    with open("Oxford 5000.txt", "r") as file:
+def get_info():
+    try:
+        time = int(input("Duration: "))
+    except time > 60:
+        print("Pick a smaller time duration")
+
+    global duration
+    duration = time
+
+    options = []
+    
+    for file in os.listdir(dir):
+        if file.endswith('.txt'):
+            options.append(file)
+    
+    for element in options:
+        buttons = [Button(label = element, value = element)]
+    
+    comp   = Component(buttons)
+    choice = comp.column_buttons()
+
+    return choice 
+
+
+def loadlist(value):
+    with open(value, "r") as file:
         words = file.read().splitlines()
         return words
 
@@ -21,9 +49,9 @@ def tracktime(start_time):
     elif elapsed > duration:
         return False
 
-def getstring():
+def getstring(value):
     sentence = ""
-    words = loadlist()
+    words = loadlist(value)
 
     for i in range(wordl):
         word = random.choice(words)
@@ -48,10 +76,9 @@ def accuracy(validity):
     errors = typed - correct
     return (accuracy, errors)
 
-def typing_test(stdscr):
+def typing_test(stdscr, target):
     stdscr.clear()
     start_time = time.time()
-    target = getstring()
     stdscr.addstr(0, 0, f"Target:{target}:")
     typed = ""
 
@@ -117,7 +144,9 @@ def typing_test(stdscr):
 
 
 def main():
-    wpm = curses.wrapper(typing_test)
+    value = get_info()
+    target = getstring(value)
+    wpm = curses.wrapper(typing_test, target)
     print(tabulate(
     [[wpm[0], wpm[1], wpm[2]]], 
     headers=['WPM', 'Accuracy (%)', '# of errors']))
