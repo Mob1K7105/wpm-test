@@ -1,6 +1,7 @@
 import curses
 import random
 import time
+from tabulate import tabulate
 
 wordl = 20
 start = True
@@ -44,7 +45,8 @@ def accuracy(validity):
         if element == True: 
             correct += 1
     accuracy = round((correct / typed) * 100)
-    return accuracy
+    errors = typed - correct
+    return (accuracy, errors)
 
 def typing_test(stdscr):
     stdscr.clear()
@@ -109,12 +111,15 @@ def typing_test(stdscr):
 
         stdscr.refresh()
 
-    values = (calculate(characters_typed), accuracy(validity))
+    acc, errors = accuracy(validity)
 
-    return values
+    return calculate(characters_typed), acc, errors
+
 
 def main():
     wpm = curses.wrapper(typing_test)
-    print(f'{wpm[0]} wpm \n{wpm[1]}% accuracy')
+    print(tabulate(
+    [[wpm[0], wpm[1], wpm[2]]], 
+    headers=['WPM', 'Accuracy (%)', '# of errors']))
 
 main()
