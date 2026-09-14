@@ -33,8 +33,18 @@ def getstring():
     return sentence
 
 def calculate(characters_typed):
-    wpm = round(characters_typed / 5 / (duration /60))
+    wpm = round(characters_typed / 5 / (duration / 60))
     return wpm
+
+def accuracy(validity):
+    typed = 0
+    correct = 0
+    for element in validity.values():
+        typed += 1
+        if element == True: 
+            correct += 1
+    accuracy = round((correct / typed) * 100)
+    return accuracy
 
 def typing_test(stdscr):
     stdscr.clear()
@@ -92,10 +102,12 @@ def typing_test(stdscr):
 
         stdscr.refresh()
 
-    return calculate(characters_typed)
+    values = (calculate(characters_typed), accuracy(validity))
+
+    return values
 
 def main():
     wpm = curses.wrapper(typing_test)
-    print(f'{wpm} wpm')
+    print(f'{wpm[0]} wpm \n{wpm[1]}% accuracy')
 
 main()
