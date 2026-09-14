@@ -75,7 +75,7 @@ def typing_test(stdscr):
             typed = typed[:-1]
         elif key is not None and len(key) == 1 and key.isprintable():
             typed += key
-        
+                
         if key == "\x1b": #Escape
             break
 
@@ -93,12 +93,19 @@ def typing_test(stdscr):
         stdscr.move(4, 0)
         stdscr.clrtoeol()
 
-        # Draw each character with its color
+        height, width = stdscr.getmaxyx()
+
         for i, character in enumerate(typed):
-            if validity.get(i, False):
-                stdscr.addstr(4, i, character, curses.color_pair(1))
-            else:
-                stdscr.addstr(4, i, character, curses.color_pair(2))
+            row = 4 + (i // width)
+            col = i % width
+
+            if row >= height:
+                break
+
+
+            color = curses.color_pair(1) if validity.get(i, False) else curses.color_pair(2)
+            stdscr.addstr(row, col, character, color)
+
 
         stdscr.refresh()
 
