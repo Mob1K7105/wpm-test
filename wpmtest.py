@@ -26,8 +26,10 @@ def get_info():
         if file.endswith('.txt'):
             options.append(file)
     
+    buttons = []
+    
     for element in options:
-        buttons = [Button(label = element, value = element)]
+        buttons.append(Button(label = element, value = element))
     
     comp   = Component(buttons)
     choice = comp.column_buttons()
