@@ -2,3 +2,4 @@
 __pycache__/
 *.pyc
 Oxford 5000.txt
+top_english_words_lower_20000.txt
